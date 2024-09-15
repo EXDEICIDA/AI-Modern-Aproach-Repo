@@ -1,0 +1,72 @@
+class Node:
+    def __init__(self, state, parent=None, action=None, depth=0):
+        self.state = state
+        self.parent = parent
+        self.action = action
+        self.depth = depth
+
+    def __repr__(self):
+        return f"Node({self.state})"
+
+# Iterative Deepening Search
+def iterative_deepening_search(problem):
+    for depth in range(0, float('inf')):
+        result = depth_limited_search(problem, depth)
+        if result != 'cutoff':
+            return result  # return solution node or failure
+
+# Depth Limited Search
+def depth_limited_search(problem, limit):
+    frontier = [Node(problem.initial_state)]  # LIFO queue (stack)
+    result = 'failure'
+
+    while frontier:
+        node = frontier.pop()
+
+        if problem.is_goal(node.state):
+            return node  # Solution found
+
+        if node.depth > limit:
+            result = 'cutoff'
+        else:
+            if not is_cycle(node):
+                for child in expand(problem, node):
+                    frontier.append(child)
+
+    return result
+
+# Helper function to check for cycles (can be adapted as per problem definition)
+def is_cycle(node):
+    ancestor = node.parent
+    while ancestor:
+        if ancestor.state == node.state:
+            return True
+        ancestor = ancestor.parent
+    return False
+
+# Example of the problem class that you will define (to customize as per your problem)
+class Problem:
+    def __init__(self, initial_state, goal_state):
+        self.initial_state = initial_state
+        self.goal_state = goal_state
+
+    def is_goal(self, state):
+        return state == self.goal_state
+
+# Example expand function (should be modified according to your problem)
+def expand(problem, node):
+    # This function should return a list of children nodes
+    # Implement based on how the problem expands to new states
+    # Placeholder for child generation:
+    children = []
+    return children
+
+# Example usage:
+# Define your own problem with initial state and goal state
+problem = Problem(initial_state='start', goal_state='goal')
+result = iterative_deepening_search(problem)
+
+if result == 'failure':
+    print("No solution found.")
+else:
+    print("Solution:", result)
